@@ -1,0 +1,21 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: sqlmap-cron
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - args:
+                - /var/app/sqlmap/sqlmap.py
+                - -u
+                - 'http://dvwa-pixie-demo-svc.apps.svc.cluster.local/vulnerabilities/sqli/?id=1&Submit=Submit#'
+                - -cookie
+                - 'PHPSESSID=ravavljq9lls1idgpithi4j697; security=low'
+              image: bschmitt769/sqlmap-dev:0.1
+              name: sqlmap-cron
+          restartPolicy: OnFailure
